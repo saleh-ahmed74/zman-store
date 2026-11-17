@@ -40,7 +40,7 @@ class ProductPage extends Component
         }
     }
 
-    public function addToCart(bool $checkout = false): RedirectResponse
+    public function addToCart(bool $checkout = false): ?RedirectResponse
     {
         $product = $this->product();
         $validColors = $product->colors->modelKeys();
@@ -53,14 +53,17 @@ class ProductPage extends Component
             }
         }
 
+        /** @var list<array{product_id: int, color_id: int, size_id: int, quantity: int}> $cart */
         $cart = session('cart.items', []);
         foreach (range(0, $this->pieces - 1) as $index) {
             $cart[] = ['product_id' => $product->id, 'color_id' => (int) $this->colors[$index], 'size_id' => (int) $this->sizes[$index], 'quantity' => 1];
         }
         session(['cart.items' => $cart]);
         session()->flash('toast', __('store.added_to_cart'));
+        $this->dispatch('cart-added', count: array_sum(array_column($cart, 'quantity')));
+        $this->dispatch('toast', type: 'success', message: __('store.added_to_cart'));
 
-        return $checkout ? redirect()->route('checkout') : redirect()->route('cart');
+        return $checkout ? redirect()->route('checkout') : null;
     }
 
     public function render(): View

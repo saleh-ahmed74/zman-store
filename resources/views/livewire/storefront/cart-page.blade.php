@@ -7,6 +7,7 @@
             @foreach ($cart['items'] as $item)
                 <article class="cart-line"><span class="cart-thumb" style="--swatch:{{ $item['color']->hex }}">{{ $item['product']->category->slug === 'hoodies' ? 'H' : 'P' }}</span>
                     <div class="cart-line-info"><a href="{{ route('product', $item['product']->slug) }}"><strong>{{ app()->getLocale() === 'ar' ? $item['product']->name_ar : $item['product']->name_en }}</strong></a><small>{{ app()->getLocale() === 'ar' ? $item['color']->name_ar : $item['color']->name_en }} · {{ $item['size']->label }}</small></div>
+                    <div class="quantity-control"><button type="button" wire:click="setQuantity({{ $item['index'] }}, {{ $item['quantity'] - 1 }})" aria-label="−">−</button><span>{{ $item['quantity'] }}</span><button type="button" wire:click="setQuantity({{ $item['index'] }}, {{ $item['quantity'] + 1 }})" aria-label="+">+</button></div>
                     <b>{{ number_format($item['line_total'], 0) }} {{ __('store.currency') }}</b><button type="button" class="remove-item" wire:click="remove({{ $item['index'] }})" aria-label="{{ __('store.remove') }}">×</button>
                 </article>
             @endforeach

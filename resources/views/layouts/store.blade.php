@@ -26,7 +26,7 @@
                 <a class="social-link" href="{{ $link['url'] }}" aria-label="{{ $link['label'] }}" target="_blank" rel="noopener">{{ strtoupper(substr($link['icon'] ?? $link['label'], 0, 2)) }}</a>
             @endforeach
             <a class="social-link whatsapp" href="https://wa.me/{{ app(\App\Services\StoreSettings::class)->get('store.general.whatsapp', '') }}" aria-label="WhatsApp" target="_blank" rel="noopener">WA</a>
-            <a class="icon-button cart-link" href="{{ route('cart') }}" aria-label="{{ __('store.cart') }}">🛒</a>
+            <a class="icon-button cart-link" id="cart-target" href="{{ route('cart') }}" aria-label="{{ __('store.cart') }}">🛒<span class="cart-count" id="cart-count">{{ collect(session('cart.items', []))->sum(fn (array $item): int => max(1, (int) ($item['quantity'] ?? 1))) }}</span></a>
         </div>
     </header>
     <div id="site-drawer" class="drawer" onclick="this.classList.remove('is-open')">
@@ -49,19 +49,61 @@
             <a href="{{ route('locale', app()->getLocale() === 'ar' ? 'en' : 'ar') }}">{{ app()->getLocale() === 'ar' ? 'English' : 'العربية' }}</a>
         </nav>
     </div>
-    @if (session()->has('toast'))
-        <div class="toast" role="status">{{ session('toast') }}</div>
-    @endif
+    <div id="site-toast" class="toast" role="status" aria-live="polite" hidden><span id="site-toast-message"></span><button type="button" aria-label="{{ __('store.close') }}" onclick="hideToast()">×</button></div>
     <main class="page-content">{{ $slot }}</main>
     <footer class="site-footer">
         <a href="{{ route('about') }}">{{ __('store.about') }}</a>
         <span>© {{ now()->year }} {{ app(\App\Services\StoreSettings::class)->get('store.general.brand', 'Hima') }}</span>
     </footer>
     <script>
+        const initialToast = @js(session('toast'));
+        function showToast(message, type = 'success') {
+            if (!message) return;
+            const toast = document.getElementById('site-toast');
+            document.getElementById('site-toast-message').textContent = message;
+            toast.dataset.type = type;
+            toast.hidden = false;
+            toast.classList.add('is-visible');
+            window.clearTimeout(window.himaToastTimer);
+            window.himaToastTimer = window.setTimeout(hideToast, 1500);
+        }
+        function hideToast() {
+            const toast = document.getElementById('site-toast');
+            toast.classList.remove('is-visible');
+            window.setTimeout(() => { toast.hidden = true; }, 180);
+        }
         function toggleTheme() {
             const root = document.documentElement;
             root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
             localStorage.setItem('hima-theme', root.dataset.theme);
+        }
+        if (initialToast) showToast(initialToast);
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('toast', (event) => showToast(event.message ?? event.detail?.message, event.type ?? event.detail?.type));
+            Livewire.on('cart-updated', (event) => {
+                document.getElementById('cart-count').textContent = event.count ?? event.detail?.count ?? '0';
+            });
+            Livewire.on('cart-added', (event) => {
+                document.getElementById('cart-count').textContent = event.count ?? event.detail?.count ?? '0';
+                flyToCart();
+            });
+        });
+        function flyToCart() {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const source = document.querySelector('.product-gallery img, .product-art-large, #tryon-mannequin');
+            const target = document.getElementById('cart-target');
+            if (!source || !target) return;
+            const start = source.getBoundingClientRect();
+            const end = target.getBoundingClientRect();
+            const clone = source.cloneNode(true);
+            Object.assign(clone.style, { position: 'fixed', zIndex: '100', left: `${start.left}px`, top: `${start.top}px`, width: `${Math.min(start.width, 260)}px`, height: `${Math.min(start.height, 300)}px`, margin: '0', pointerEvents: 'none', objectFit: 'cover', borderRadius: '12px' });
+            document.body.appendChild(clone);
+            clone.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1, offset: 0 },
+                { transform: `translate(${(end.left - start.left) * .48}px, ${(end.top - start.top) * .48 - 100}px) scale(.66)`, opacity: .9, offset: .55 },
+                { transform: `translate(${end.left - start.left}px, ${end.top - start.top}px) scale(.12)`, opacity: 0, offset: 1 },
+            ], { duration: 620, easing: 'cubic-bezier(.25,.7,.3,1)' }).onfinish = () => clone.remove();
+            target.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.28)' }, { transform: 'scale(1)' }], { duration: 420 });
         }
     </script>
     @livewireScripts

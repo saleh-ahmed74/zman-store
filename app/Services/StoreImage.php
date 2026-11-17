@@ -11,6 +11,31 @@ use RuntimeException;
 
 final class StoreImage
 {
+    public function savePrivate(UploadedFile $file, string $directory): string
+    {
+        if (! function_exists('imagewebp')) {
+            throw new RuntimeException('The GD WebP encoder is required to save payment proofs.');
+        }
+
+        $source = imagecreatefromstring($file->get());
+        if ($source === false) {
+            throw new RuntimeException('The uploaded image could not be decoded.');
+        }
+
+        ob_start();
+        imagewebp($source, null, 84);
+        $encoded = ob_get_clean();
+        imagedestroy($source);
+        if (! is_string($encoded) || $encoded === '') {
+            throw new RuntimeException('The payment proof could not be encoded as WebP.');
+        }
+
+        $path = trim($directory, '/').'/'.Str::uuid().'.webp';
+        Storage::disk('local')->put($path, $encoded);
+
+        return $path;
+    }
+
     public function save(UploadedFile $file, string $directory, int $maxDimension = 1800): string
     {
         if (! function_exists('imagewebp')) {
