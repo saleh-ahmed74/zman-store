@@ -69,6 +69,7 @@ class DatabaseSeeder extends Seeder
             ['store.general', ['brand' => 'Hima', 'whatsapp' => '201000000000', 'currency' => 'EGP'], 'general'],
             ['store.hero', ['title_ar' => 'هوديز وبناطيل بقصّة مودرن', 'title_en' => 'Modern hoodies and pants', 'subtitle_ar' => 'قطع مريحة وخامات تدوم، توصلك لحد باب البيت.', 'subtitle_en' => 'Comfortable pieces made to last, delivered to your door.'], 'home'],
             ['store.shipping', ['free_for_all' => false, 'free_shipping_from' => 2], 'shipping'],
+            ['store.auth', ['require_email_verification' => false], 'auth'],
             ['store.payment', ['enabled' => ['cod' => true, 'instapay' => true, 'vodafone_cash' => true], 'instapay_url' => 'https://ipn.eg/S/salehahmed4774/instapay/8Fx1KB', 'vodafone_cash' => '01062575484'], 'payment'],
             ['store.social', ['links' => [['label' => 'Instagram', 'url' => 'https://instagram.com/', 'icon' => 'instagram'], ['label' => 'Facebook', 'url' => 'https://facebook.com/', 'icon' => 'facebook'], ['label' => 'TikTok', 'url' => 'https://tiktok.com/', 'icon' => 'tiktok']]], 'social'],
         ] as [$key, $value, $group]) {

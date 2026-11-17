@@ -15,7 +15,7 @@
 3. مجلد المشروع كان فارغًا عدا `.git`، ولا توجد ملفات Laravel ابتدائية.
 4. اخترت Laravel 12 (آخر إصدار رئيسي يدعم PHP 8.2 المتاح) + Livewire 3 + Blade. الإعدادات الافتراضية لـ cache/session/queue هي `file`/`file`/`sync`.
 5. ممنوع SQLite بالكامل، حتى في إعدادات PHPUnit؛ إعدادات التشغيل والاختبارات تشير إلى MySQL وقاعدة اختبار منفصلة.
-6. فرع التطوير المحلي `codex/development` والـ remote `origin` يشيران إلى مستودع GitHub الذي حدده المستخدم. لم يتم push بعد.
+6. فرع التطوير المحلي `codex/development` والـ remote `origin` يشيران إلى مستودع GitHub الذي حدده المستخدم؛ لن أدمج إلى `main`.
 
 ## سجل التقدم
 
@@ -33,6 +33,9 @@
 - رُفع Livewire إلى 3.8.11 بعد `composer audit` كشف CVE حرجًا ومتوسطًا في 3.6؛ التدقيق بعد التحديث وجد صفر تنبيهات.
 - `vendor/bin/pint` ناجح، وLarastan level 6 ناجح، و`php artisan test` ناجح (3 اختبارات / 7 assertions)، و`composer validate` ناجح، و`npm run build` ناجح.
 - Composer lock refresh و`route:list` نجحا بعد اقتباس `APP_NAME` في `.env`.
+- تم إنشاء commit `fb8a07e` ودفعه إلى `origin/codex/development` (فرع جديد؛ لم تكن هناك فروع سابقة على الريبو).
+- أضيفت شاشات التسجيل والدخول والخروج وإعادة تعيين كلمة المرور، وتدوير session، وحد محاولات (5/دقيقة)، ورسائل عامة لاستعادة كلمة المرور، وإمكانية تفعيل تأكيد البريد من Store Settings، وحماية `/admin` عبر middleware.
+- أضيفت اختبارات MySQL للمصادقة وتقييد الأدمن؛ لم تُشغّل بعد لأن قاعدة الاختبار وبيانات اتصال MySQL غير متاحة. اختبارات Foundation وPint وLarastan ما زالت ناجحة بعد إضافة شاشات المصادقة.
 - أبقيت PHPUnit على MySQL مع قاعدة منفصلة `hima_store_test`، كما أزلت أي connection أو توليد SQLite من التهيئة.
 - طلب إنشاء قاعدة `hima_store` محليًا فشل لأن `root@localhost` يحتاج كلمة مرور. طلبت من المستخدم بيانات حساب مخوّل، وسأكمل بالتوازي.
 
@@ -46,8 +49,8 @@
 
 | # | المرحلة | الحالة | ملاحظات |
 |---|---|---|---|
-| 1 | Foundation | مكتملة محليًا | Laravel 12 / Livewire 3، i18n/RTL، الثيم، layout، إعدادات cache، Pest/Pint/Larastan، والبناء ناجح؛ بانتظار رفعها إلى GitHub |
-| 2 | Auth | لم تبدأ | |
+| 1 | Foundation | مكتملة ومدفوعة | Laravel 12 / Livewire 3، i18n/RTL، الثيم، layout، إعدادات cache، Pest/Pint/Larastan، والبناء ناجح |
+| 2 | Auth | تنفيذ أولي | الوظائف والحماية والاختبارات أضيفت؛ تشغيل اختبارات MySQL والمراجعة النهائية تنتظر اعتماد الاتصال |
 | 3 | Catalog schema + Admin CRUD | جزئي | schema + seeder؛ CRUD والأرشيف باقيان |
 | 4 | Storefront | جزئي | الرئيسية والمتجر والمنتج موجودة؛ الصفحات التفصيلية/الصور/الدليل باقي |
 | 5 | Cart + animation | جزئي | سلة Session وحساب أسعار/خصم من DB؛ الرسوم المتحركة ودمج الحساب وlocalStorage باقي |

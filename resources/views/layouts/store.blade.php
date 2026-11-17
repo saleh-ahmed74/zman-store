@@ -26,7 +26,7 @@
                 <a class="social-link" href="{{ $link['url'] }}" aria-label="{{ $link['label'] }}" target="_blank" rel="noopener">{{ strtoupper(substr($link['icon'] ?? $link['label'], 0, 2)) }}</a>
             @endforeach
             <a class="social-link whatsapp" href="https://wa.me/{{ app(\App\Services\StoreSettings::class)->get('store.general.whatsapp', '') }}" aria-label="WhatsApp" target="_blank" rel="noopener">WA</a>
-            <a class="icon-button cart-link" href="{{ route('shop') }}" aria-label="{{ __('store.shop') }}">♧</a>
+            <a class="icon-button cart-link" href="{{ route('cart') }}" aria-label="{{ __('store.cart') }}">🛒</a>
         </div>
     </header>
     <div id="site-drawer" class="drawer" onclick="this.classList.remove('is-open')">
@@ -39,6 +39,13 @@
             @endforeach
             <a href="{{ route('try-on') }}">{{ __('store.try_on') }}</a>
             <a href="{{ route('about') }}">{{ __('store.about') }}</a>
+            @auth
+                <a href="{{ route('account.orders') }}">{{ __('store.my_orders') }}</a>
+                <form method="POST" action="{{ route('logout') }}">@csrf<button class="drawer-action" type="submit">{{ __('store.logout') }}</button></form>
+            @else
+                <a href="{{ route('login') }}">{{ __('store.login') }}</a>
+                <a href="{{ route('register') }}">{{ __('store.register') }}</a>
+            @endauth
             <a href="{{ route('locale', app()->getLocale() === 'ar' ? 'en' : 'ar') }}">{{ app()->getLocale() === 'ar' ? 'English' : 'العربية' }}</a>
         </nav>
     </div>
