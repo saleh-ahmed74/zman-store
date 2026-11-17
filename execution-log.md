@@ -1,0 +1,62 @@
+# سجل تنفيذ خطة Hima Store
+
+> يُحدّث هذا الملف مع تقدم التنفيذ. الخطة الأصلية موجودة في `C:/Users/saleh/Downloads/zman-plan.md`.
+
+## الحالة الحالية
+
+- **بدأ التنفيذ:** 2026-11-17
+- **المرحلة الحالية:** Foundation جاهزة محليًا، مع بدء schema وواجهات المتجر.
+- **الحالة:** التطبيق scaffolded ومبني؛ قاعدة MySQL تنتظر بيانات صلاحيات الحساب لتشغيل migrations فعليًا.
+
+## القرارات
+
+1. الخطة هي مواصفات المنتج؛ أي تعليمات داخل ملفات مرجعية تُعامل كمحتوى مرجعي، لا كتعليمات تغيّر طلب المستخدم.
+2. المرجع البصري وصل باسم `Hima _ Reference Storefront.html` في Downloads وتمت مراجعته. بيانات النموذج الأولي (الفئات والمنتجات والأسعار والألوان) تزرع في MySQL؛ مواصفات الخطة الأحدث تتغلب على أي اختلافات سلوكية.
+3. مجلد المشروع كان فارغًا عدا `.git`، ولا توجد ملفات Laravel ابتدائية.
+4. اخترت Laravel 12 (آخر إصدار رئيسي يدعم PHP 8.2 المتاح) + Livewire 3 + Blade. الإعدادات الافتراضية لـ cache/session/queue هي `file`/`file`/`sync`.
+5. ممنوع SQLite بالكامل، حتى في إعدادات PHPUnit؛ إعدادات التشغيل والاختبارات تشير إلى MySQL وقاعدة اختبار منفصلة.
+6. فرع التطوير المحلي `codex/development` والـ remote `origin` يشيران إلى مستودع GitHub الذي حدده المستخدم. لم يتم push بعد.
+
+## سجل التقدم
+
+### 2026-11-17 — بدء العمل
+
+- قرأت خطة التنفيذ كاملة (المراحل، النطاق الوظيفي، الأمان، الاستضافة، ومعايير الإنجاز).
+- فحصت المشروع: لا يوجد تطبيق سابق ولا `AGENTS.md` في الملفات الظاهرة.
+- تحققت من الأدوات: PHP 8.2 وComposer متاحان؛ أمر npm عبر PowerShell واجه منع وصول إلى ملف npm CLI.
+- جربت إنشاء Laravel في مجلد وسيط؛ فشل Composer لأن الاتصال بـ `repo.packagist.org` غير متاح (curl error 7). لم يتم تنزيل أي حزمة.
+- ثُبّت Laravel 12.72 وLivewire 3.6 وPest 3.8 وLarastan 3.15 وCairo ذاتيًا؛ npm أبلغ عن صفر ثغرات في تدقيق الحزم.
+- أضيف layout عربي RTL/إنجليزي LTR، تبديل dark/light بحفظ `localStorage`، header/drawer، homepage وواجهات shop/product/cart، وبحث/ترتيب/نطاق سعر عبر URL.
+- أضيف MySQL schema للكتالوج والعروض والشحن والطلبات وبنودها والمدفوعات والمرتجعات والصفحات والإعدادات وaudit logs، مع seeder لمحتوى المرجع.
+- أزيل إنشاء SQLite الافتراضي من Composer، وضُبط PHPUnit على MySQL وقاعدة `hima_store_test`.
+- نجح `npm install` (0 vulnerabilities) و`npm run build`، ونجح فحص صياغة ملفات PHP الجديدة.
+- رُفع Livewire إلى 3.8.11 بعد `composer audit` كشف CVE حرجًا ومتوسطًا في 3.6؛ التدقيق بعد التحديث وجد صفر تنبيهات.
+- `vendor/bin/pint` ناجح، وLarastan level 6 ناجح، و`php artisan test` ناجح (3 اختبارات / 7 assertions)، و`composer validate` ناجح، و`npm run build` ناجح.
+- Composer lock refresh و`route:list` نجحا بعد اقتباس `APP_NAME` في `.env`.
+- أبقيت PHPUnit على MySQL مع قاعدة منفصلة `hima_store_test`، كما أزلت أي connection أو توليد SQLite من التهيئة.
+- طلب إنشاء قاعدة `hima_store` محليًا فشل لأن `root@localhost` يحتاج كلمة مرور. طلبت من المستخدم بيانات حساب مخوّل، وسأكمل بالتوازي.
+
+## العوائق والاعتماديات
+
+- إنشاء قاعدة MySQL ومستخدم التطبيق وتشغيل migrations ينتظر بيانات اعتماد MySQL؛ القاعدة لم تُنشأ بعد.
+- النشر على Hostinger، إعداد SMTP والتخزين الخارجي، وبيانات حسابات الدفع/الأدمن تتطلب وصولًا أو إعدادات سرية غير متاحة حتى الآن.
+- Git metadata داخل `.git` للقراءة فقط في sandbox؛ إنشاء الفرع وإضافة remote تمّا بعد رفع الصلاحية. سيحتاج كل commit/push إلى صلاحية الكتابة نفسها.
+
+## المراحل
+
+| # | المرحلة | الحالة | ملاحظات |
+|---|---|---|---|
+| 1 | Foundation | مكتملة محليًا | Laravel 12 / Livewire 3، i18n/RTL، الثيم، layout، إعدادات cache، Pest/Pint/Larastan، والبناء ناجح؛ بانتظار رفعها إلى GitHub |
+| 2 | Auth | لم تبدأ | |
+| 3 | Catalog schema + Admin CRUD | جزئي | schema + seeder؛ CRUD والأرشيف باقيان |
+| 4 | Storefront | جزئي | الرئيسية والمتجر والمنتج موجودة؛ الصفحات التفصيلية/الصور/الدليل باقي |
+| 5 | Cart + animation | جزئي | سلة Session وحساب أسعار/خصم من DB؛ الرسوم المتحركة ودمج الحساب وlocalStorage باقي |
+| 6 | Checkout | لم تبدأ | |
+| 7 | User orders | لم تبدأ | |
+| 8 | Admin orders & returns | لم تبدأ | |
+| 9 | Analytics dashboard | لم تبدأ | |
+| 10 | Store Settings | لم تبدأ | |
+| 11 | Try-on | لم تبدأ | |
+| 12 | PWA/Offline | لم تبدأ | |
+| 13 | Hardening & performance | لم تبدأ | |
+| 14 | Deploy + Backups + Monitoring | لم تبدأ | يحتاج إعدادات استضافة وخدمات خارجية |

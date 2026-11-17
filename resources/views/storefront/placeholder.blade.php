@@ -1,0 +1,1 @@
+<section class="placeholder-page"><p class="eyebrow">Hima</p><h1>{{ $heading }}</h1><p>{{ __('store.feature_in_progress') }}</p><a class="button button-dark" href="{{ route('shop') }}">{{ __('store.shop_now') }}</a></section>
