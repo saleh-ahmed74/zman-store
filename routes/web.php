@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Livewire\Admin\Categories\Index as AdminCategories;
+use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Admin\Orders\Index as AdminOrders;
 use App\Livewire\Admin\Products\Index as AdminProducts;
 use App\Livewire\Auth\ForgotPassword;
@@ -67,7 +68,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 Route::middleware('auth')->get('/account/orders', MyOrders::class)->name('account.orders');
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function (): void {
-    Route::view('/', 'storefront.admin-placeholder')->name('admin');
+    Route::get('/', AdminDashboard::class)->name('admin');
     Route::get('/categories', AdminCategories::class)->name('admin.categories');
     Route::get('/products', AdminProducts::class)->name('admin.products');
     Route::get('/orders', AdminOrders::class)->name('admin.orders');

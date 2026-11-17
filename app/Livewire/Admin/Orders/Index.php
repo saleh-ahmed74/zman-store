@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -18,8 +19,10 @@ class Index extends Component
 {
     use WithPagination;
 
+    #[Url]
     public string $statusFilter = '';
 
+    #[Url]
     public string $paymentFilter = '';
 
     public string $refundAmount = '';
@@ -36,6 +39,7 @@ class Index extends Component
                 'pending' => ['confirmed', 'cancelled'], 'confirmed' => ['shipped', 'cancelled'], 'shipped' => ['delivered'], default => [],
             };
             abort_unless(in_array($toStatus, $allowed, true), 422, __('store.invalid_order_transition'));
+            abort_if($toStatus === 'confirmed' && $order->payment_method !== 'cod' && $order->payment_status !== 'paid', 422, __('store.payment_must_be_approved'));
             $timestamp = match ($toStatus) {
                 'confirmed' => 'confirmed_at', 'shipped' => 'shipped_at', 'delivered' => 'delivered_at', 'cancelled' => 'cancelled_at'
             };

@@ -69,4 +69,11 @@ return [
     'return_status_requested' => 'طلب جديد', 'return_status_approved' => 'تمت الموافقة', 'return_status_received' => 'تم الاستلام',
     'return_status_rejected' => 'مرفوض', 'return_status_refunded' => 'تم رد المبلغ', 'mark_return_received' => 'تأكيد استلام المرتجع',
     'refund_amount' => 'قيمة المبلغ المسترد', 'mark_refunded' => 'تأكيد رد المبلغ',
+    'refresh' => 'تحديث', 'today' => 'اليوم', 'last_7_days' => 'آخر 7 أيام', 'last_30_days' => 'آخر 30 يومًا',
+    'apply_filter' => 'تطبيق الفترة', 'analytics_max_range' => 'أقصى فترة للتقرير 365 يومًا.', 'no_analytics' => 'لا توجد بيانات في الفترة دي.',
+    'expected_revenue' => 'الإيراد المتوقع', 'actual_revenue' => 'الإيراد الفعلي', 'cancellation_loss' => 'خسارة الإلغاءات',
+    'return_loss' => 'المبالغ المستردة', 'average_order' => 'متوسط الطلب', 'awaiting_review' => 'تحويلات بانتظار المراجعة',
+    'cancel_rate' => 'نسبة الإلغاء', 'return_rate' => 'نسبة المرتجعات', 'delivery_rate' => 'نسبة التسليم',
+    'orders_by_status' => 'الطلبات حسب الحالة', 'payment_distribution' => 'طرق الدفع', 'daily_revenue' => 'الإيراد اليومي',
+    'top_products' => 'أكثر المنتجات مبيعًا', 'top_governorates' => 'أعلى المحافظات طلبًا', 'payment_must_be_approved' => 'لا يمكن تأكيد الطلب قبل اعتماد الدفع الإلكتروني.',
 ];

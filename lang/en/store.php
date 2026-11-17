@@ -69,4 +69,11 @@ return [
     'return_status_requested' => 'New request', 'return_status_approved' => 'Approved', 'return_status_received' => 'Received',
     'return_status_rejected' => 'Rejected', 'return_status_refunded' => 'Refunded', 'mark_return_received' => 'Mark return received',
     'refund_amount' => 'Refund amount', 'mark_refunded' => 'Mark refunded',
+    'refresh' => 'Refresh', 'today' => 'Today', 'last_7_days' => 'Last 7 days', 'last_30_days' => 'Last 30 days',
+    'apply_filter' => 'Apply range', 'analytics_max_range' => 'Reports can cover up to 365 days.', 'no_analytics' => 'No data for this date range.',
+    'expected_revenue' => 'Expected revenue', 'actual_revenue' => 'Actual revenue', 'cancellation_loss' => 'Cancellation loss',
+    'return_loss' => 'Refunds', 'average_order' => 'Average order value', 'awaiting_review' => 'Transfers awaiting review',
+    'cancel_rate' => 'Cancellation rate', 'return_rate' => 'Return rate', 'delivery_rate' => 'Delivery rate',
+    'orders_by_status' => 'Orders by status', 'payment_distribution' => 'Payment methods', 'daily_revenue' => 'Daily revenue',
+    'top_products' => 'Top selling products', 'top_governorates' => 'Top governorates', 'payment_must_be_approved' => 'Approve the online payment before confirming this order.',
 ];
