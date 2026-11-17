@@ -13,6 +13,7 @@
             <a href="{{ route('admin') }}">{{ __('store.dashboard') }}</a>
             <a href="{{ route('admin.categories') }}">{{ __('store.manage_categories') }}</a>
             <a href="{{ route('admin.products') }}">{{ __('store.manage_products') }}</a>
+            <a href="{{ route('admin.orders') }}">{{ __('store.manage_orders') }}</a>
             <a href="{{ route('home') }}">{{ __('store.view_store') }}</a>
             <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit">{{ __('store.logout') }}</button></form>
         </aside>

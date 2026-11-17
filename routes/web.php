@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Livewire\Admin\Categories\Index as AdminCategories;
+use App\Livewire\Admin\Orders\Index as AdminOrders;
 use App\Livewire\Admin\Products\Index as AdminProducts;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
@@ -12,14 +13,16 @@ use App\Livewire\Storefront\CartPage;
 use App\Livewire\Storefront\Checkout;
 use App\Livewire\Storefront\ContentPage;
 use App\Livewire\Storefront\Home;
+use App\Livewire\Storefront\MyOrders;
 use App\Livewire\Storefront\ProductPage;
 use App\Livewire\Storefront\Shop;
 use App\Livewire\Storefront\TryOn;
-use App\Services\StoreSettings;
+use App\Models\Order;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', Home::class)->name('home');
 Route::get('/shop', Shop::class)->name('shop');
@@ -62,16 +65,17 @@ Route::post('/email/verification-notification', function (Request $request) {
 
     return back()->with('status', __('store.verification_sent'));
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-Route::middleware('auth')->get('/account/orders', function (Request $request) {
-    if (app(StoreSettings::class)->get('store.auth.require_email_verification', false)
-        && ! $request->user()->hasVerifiedEmail()) {
-        return redirect()->route('verification.notice');
-    }
-
-    return view('storefront.placeholder', ['heading' => __('store.my_orders')]);
-})->name('account.orders');
+Route::middleware('auth')->get('/account/orders', MyOrders::class)->name('account.orders');
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function (): void {
     Route::view('/', 'storefront.admin-placeholder')->name('admin');
     Route::get('/categories', AdminCategories::class)->name('admin.categories');
     Route::get('/products', AdminProducts::class)->name('admin.products');
+    Route::get('/orders', AdminOrders::class)->name('admin.orders');
+    Route::get('/orders/{order}/payment-proof', function (Order $order) {
+        abort_unless(auth()->user()?->is_admin && $order->payment_proof_path !== null, 404);
+        $path = Storage::disk('local')->path($order->payment_proof_path);
+        abort_unless(is_file($path), 404);
+
+        return response()->file($path, ['Content-Type' => 'image/webp', 'X-Content-Type-Options' => 'nosniff']);
+    })->name('admin.orders.proof');
 });

@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './orders.css';
 
 @source '../../vendor/livewire/livewire/dist/livewire.esm';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
