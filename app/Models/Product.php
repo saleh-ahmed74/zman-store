@@ -48,6 +48,12 @@ class Product extends Model
         return $this->hasMany(ProductImage::class)->orderBy('sort_order');
     }
 
+    /** @return HasMany<Offer, $this> */
+    public function offers(): HasMany
+    {
+        return $this->hasMany(Offer::class)->orderBy('pieces');
+    }
+
     /** @param Builder<Product> $query
      * @return Builder<Product>
      */

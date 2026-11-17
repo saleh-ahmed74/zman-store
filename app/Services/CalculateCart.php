@@ -49,6 +49,7 @@ final class CalculateCart
 
         $subtotal = round(array_sum(array_column($items, 'line_total')), 2);
         $discount = 0.0;
+        $hasFreeShippingOffer = false;
         foreach ($counts as $productId => $count) {
             $pieces = min(4, $count);
             if ($pieces < 2) {
@@ -58,14 +59,15 @@ final class CalculateCart
                 ->where(fn ($query) => $query->whereNull('product_id')->orWhere('product_id', $productId))
                 ->orderByRaw('product_id IS NULL')->first();
             $rate = ($offer === null ? 0.0 : (float) $offer->discount_percent) / 100;
+            $hasFreeShippingOffer = $hasFreeShippingOffer || ($offer !== null && $offer->free_shipping);
             if ($rate > 0) {
                 $productTotal = array_sum(array_map(fn (array $line): float => $line['product']->id === (int) $productId ? $line['line_total'] : 0, $items));
                 $discount += $productTotal * $rate;
             }
         }
 
-        $freeShipping = count($items) >= (int) app(StoreSettings::class)->get('store.shipping.free_shipping_from', 2)
-            || collect($items)->contains(fn (array $item): bool => Offer::query()->where('is_active', true)->where('product_id', $item['product']->id)->where('free_shipping', true)->exists());
+        $freeShipping = array_sum(array_column($items, 'quantity')) >= (int) app(StoreSettings::class)->get('store.shipping.free_shipping_from', 2)
+            || $hasFreeShippingOffer;
 
         return ['items' => $items, 'subtotal' => $subtotal, 'discount' => round($discount, 2), 'free_shipping' => $freeShipping, 'count' => array_sum(array_column($items, 'quantity'))];
     }

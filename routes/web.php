@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Livewire\Admin\Categories\Index as AdminCategories;
+use App\Livewire\Admin\Products\Index as AdminProducts;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
@@ -66,4 +68,8 @@ Route::middleware('auth')->get('/account/orders', function (Request $request) {
 
     return view('storefront.placeholder', ['heading' => __('store.my_orders')]);
 })->name('account.orders');
-Route::middleware(['auth', 'admin'])->prefix('admin')->get('/', fn () => view('storefront.admin-placeholder'))->name('admin');
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function (): void {
+    Route::view('/', 'storefront.admin-placeholder')->name('admin');
+    Route::get('/categories', AdminCategories::class)->name('admin.categories');
+    Route::get('/products', AdminProducts::class)->name('admin.products');
+});

@@ -1,4 +1,5 @@
 <section class="auth-page"><p class="eyebrow">Hima account</p><h1>{{ __('store.login') }}</h1>
+    @if (session('status'))<p class="form-status" role="status">{{ session('status') }}</p>@endif
     <form class="auth-form" wire:submit="authenticate">
         <label>{{ __('store.email') }}<input type="email" wire:model.blur="email" autocomplete="email" maxlength="120" required aria-invalid="@error('email') true @else false @enderror"></label>
         @error('email')<p class="form-error" role="alert">{{ $message }}</p>@enderror
